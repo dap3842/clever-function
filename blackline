@@ -1,0 +1,32 @@
+Motor.Invert("B")
+Function BlackLine (in number V0)
+err=0
+errold=0
+kp=V0/50
+kp1=kp
+pkp=kp/2/10*7.5
+res=kp/80
+kd=kp*5
+  i=0
+  g=100
+  Time.Reset1()
+  While "True"
+  i=i+1
+  err=Sensor.ReadPercent(2)-Sensor.ReadPercent(3)
+  up=err*kp+(err-errold)*kd
+  b=V0+up
+  c=V0-up
+  Motor.StartPower("B",b)
+  Motor.StartPower("C",c)
+  If err <> 0 Then
+    kp=kp+pkp
+  EndIf
+  errold=err
+  LCD.Text(1,25,25,2,i)
+  If i > 5 Then
+    i=0
+    kp=kp1
+    EndIf
+    g=Sensor.ReadPercent(2)+Sensor.ReadPercent(3)
+  EndWhile
+EndFunction
