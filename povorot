@@ -1,0 +1,6 @@
+Motor.Invert("B")
+Function povorot(in number skokgrad,in number V0)
+grad=17.85/5.6*skokgrad
+  Motor.MoveSync("BC",-V0,V0,grad,"True")
+EndFunction
+povorot(180,25)
