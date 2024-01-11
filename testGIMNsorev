@@ -1,0 +1,144 @@
+Speaker.Note
+
+Function BlackLine (in number V0, in string left, in string right)
+  if left = "U" Then
+    l=5
+  ElseIf left = "R" Then
+    l=3
+  ElseIf left = "D" Then
+    l=2
+  ElseIf left = "L" Then
+    l=4
+  Else
+    Speaker.Tone(100,1000,100)
+  EndIf
+    if right = "U" Then
+    r=5
+  ElseIf right = "R" Then
+    r=3
+  ElseIf right = "D" Then
+    r=2
+  ElseIf right = "L" Then
+    r=4
+  Else
+    Speaker.Tone(100,2000,100)
+  EndIf
+  If left=right Then
+    Speaker.Tone(100,500,100)
+    Speaker.Tone(100,1000,100)  
+  EndIf
+   
+    
+Sensor.SetMode(1,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(4,2)
+
+  
+  Motor.Move("D",25,180,"True")
+  Motor.Start("A",25)
+  Program.Delay(1000)
+  Motor.Move("A",-25,110,"True")
+  Program.Delay(500)
+  Motor.Move("D",-25,90,"True")
+  
+  Motor.Invert("B")
+  
+err=0
+errold=0
+kp=0.3
+kd=1
+  i=0
+  While Sensor.ReadRawValue(4,0) <> 5
+  i=i+1
+  err=Sensor.ReadPercent(2)-Sensor.ReadPercent(3)
+  up=err*kp+(err-errold)*kd
+  b=V0+up
+  c=V0-up
+  Motor.StartPower("B",b)
+    Motor.StartPower("C",c)
+    If Sensor.ReadRawValue(1,0) = r Then
+      Motor.Move("BC",-15,250,"True")
+      Motor.Move("D",100,1080,"True")
+      ElseIf Sensor.ReadRawValue(1,0) = l Then
+      Motor.Move("BC",-15,250,"True")
+      Motor.Move("D",-100,1080,"True")
+      EndIf
+   errold=err
+  EndWhile
+  Motor.Stop("BC","true")
+  Program.Delay(100)
+  Motor.Start("A",-25)
+  Program.Delay(1000)
+  Motor.Stop("A","True")
+    Program.Delay(100)
+  Motor.Move("D",-25,90,"True")
+  Program.Delay(100)
+  Program.Delay(300)
+  Motor.StartSync("BC",11,10)
+  Program.Delay(4000)
+  Motor.Stop("BC","TRue")
+    Program.Delay(100)
+  Motor.Move("BC",-25,20,"True")
+EndFunction
+
+
+LCD.Clear()
+LCD.Text(1,70,10,1,"left")
+LCD.Text(1,0,40,1,"up button is red")
+LCD.Text(1,0,60,1,"right button is green")
+LCD.Text(1,0,80,1,"down button is blue")
+LCD.Text(1,0,100,1,"left button is yellow")
+
+Speaker.Tone(10,1000,100)
+Buttons.Wait()
+left = Buttons.GetClicks()
+Speaker.Tone(10,1000,100)
+Speaker.Tone(10,2000,100)
+Buttons.Flush()
+LCD.Clear()
+LCD.Text(1,70,10,1,"right")
+LCD.Text(1,0,40,1,"up button is red")
+LCD.Text(1,0,60,1,"right button is green")
+LCD.Text(1,0,80,1,"down button is blue")
+LCD.Text(1,0,100,1,"left button is yellow")
+Speaker.Tone(10,1000,100)
+Buttons.Wait()
+right = Buttons.GetClicks()
+Speaker.Tone(10,1000,100)
+Speaker.Tone(10,2000,100)
+LCD.Clear()
+if left = "U" Then
+  leftik="red"
+ElseIf left = "R" Then
+  leftik = "green"
+ElseIf left = "D" Then
+  leftik = "blue"
+else
+  leftik="yellow"
+EndIf
+if right = "U" Then
+  rightik="red"
+ElseIf right = "R" Then
+  rightik = "green"
+ElseIf right = "D" Then
+  rightik = "blue"
+else
+  rightik="yellow"
+EndIf
+if rightik=leftik Then
+  While "True"
+    Speaker.Tone(100,1000,100)
+  EndWhile
+EndIf
+
+LCD.Text(1,10,10,1,"left")
+LCD.Text(1,100,10,1,"right")
+LCD.Text(1,10,50,1,leftik)
+LCD.Text(1,100,50,1,rightik)
+LCD.Text(1,10,30,1,"=")
+LCD.Text(1,100,30,1,"=")
+LCD.Text(1,5,70,1,"if u agree, press")
+LCD.Text(1,5,85,1,"any button")
+Buttons.Wait()
+BlackLine(40,left,right)
