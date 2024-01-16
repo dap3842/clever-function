@@ -1,4 +1,4 @@
-Speaker.Note
+
 
 Function BlackLine (in number V0, in string left, in string right)
   if left = "U" Then
@@ -64,22 +64,17 @@ kd=1
       Motor.Move("BC",-15,250,"True")
       Motor.Move("D",-100,1080,"True")
       EndIf
-   errold=err
+    errold=err
+    
   EndWhile
+  Program.Delay(200)
   Motor.Stop("BC","true")
-  Program.Delay(100)
-  Motor.Start("A",-25)
+  Motor.StartSync("BC",-25,25)
+  Speaker.Tone(100,1000,100)
   Program.Delay(1000)
-  Motor.Stop("A","True")
-    Program.Delay(100)
-  Motor.Move("D",-25,90,"True")
-  Program.Delay(100)
-  Program.Delay(300)
-  Motor.StartSync("BC",11,10)
-  Program.Delay(4000)
-  Motor.Stop("BC","TRue")
-    Program.Delay(100)
-  Motor.Move("BC",-25,20,"True")
+  While Sensor.ReadPercent(3) > 30
+  EndWhile
+  Motor.Stop("BC", "True")
 EndFunction
 
 
